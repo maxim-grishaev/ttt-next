@@ -4,15 +4,18 @@ import styles from './Box.module.css';
 export const Box = ({
   state,
   onClick,
+  className,
 }: {
   state: TttPlayer;
-  onClick: () => void;
+  onClick?: () => void;
+  className?: string;
 }) => {
   const isEmpty = state === ' ';
   return (
     <div
       className={[
         styles.box,
+        className || '',
         state === TttPlayer.X
           ? styles.x
           : state === TttPlayer.O

@@ -1,7 +1,13 @@
 :root {
+  --playex-x: #e74c3c;
+  --playex-o: #3498db;
+  /*  */
+  --gray-rgb: 0, 0, 0;
   --background: #ffffff;
   --foreground: #171717;
   --button-primary: #18a9f8;
+  --gray-border: rgba(var(--gray-rgb), 0.08);
+  --gray-bg: rgba(var(--gray-rgb), 0.05);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,6 +15,9 @@
     --background: #0a0a0a;
     --foreground: #ededed;
     --button-primary: #0163b8;
+    --gray-rgb: 255, 255, 255;
+    --gray-border: rgba(var(--gray-rgb), 0.145);
+    --gray-bg: rgba(var(--gray-rgb), 0.06);
   }
 }
 
@@ -27,7 +36,16 @@ body {
 }
 
 p {
-  margin: 1ex;
+  margin: 1ex 0;
+}
+
+h1,
+h2 {
+  font-weight: 200;
+  font-size: 4rem;
+}
+h2 {
+  font-size: 3.5rem;
 }
 
 * {
@@ -52,7 +70,7 @@ button {
   background: var(--button-primary);
   color: var(--foreground);
   border: none;
-  padding: 10px;
+  padding: 5px 10px;
   border-radius: 5px;
 }
 input[type='checkbox'] {

@@ -1,0 +1,38 @@
+.title {
+  display: inline-flex;
+  vertical-align: middle;
+  margin: 0 0.5ex;
+  .player {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.gameState {
+  font-size: 1.5em;
+  font-weight: 200;
+
+  .player {
+    width: 20px;
+    height: 20px;
+  }
+  &.playing {
+    opacity: 0.3;
+  }
+  &.winX {
+    font-weight: 500;
+  }
+  &.winO {
+    font-weight: 500;
+  }
+  &.draw::before {
+    content: '🤝';
+    display: inline-block;
+    margin-right: 0.5em;
+  }
+
+  button {
+    margin-left: 1em;
+    vertical-align: middle;
+  }
+}

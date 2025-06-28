@@ -1,7 +1,6 @@
 import { getIndicesByValue } from '@/lib/getIndicesByValue';
 import { TttBoard, TttPlayer } from './board';
 import {
-  cloneBoard,
   GameState,
   getGameState,
   getWinnerByGameState,

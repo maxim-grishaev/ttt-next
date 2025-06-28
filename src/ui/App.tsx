@@ -9,6 +9,8 @@ import {
   updateBoard,
 } from '@/domain/getGameState';
 import { getBotMove } from '@/domain/getBotMove';
+import { Box } from './Box';
+import styles from './App.module.css';
 
 export default function App() {
   const [withRobot, setWithRobot] = useState(false);
@@ -23,7 +25,13 @@ export default function App() {
   const gs = getGameState(currentBoard);
   return (
     <div className='App'>
-      <h1>TicTacToe</h1>
+      <h1>
+        TicTacToe
+        <span className={styles.title}>
+          <Box state={TttPlayer.X} className={styles.player} />
+          <Box state={TttPlayer.O} className={styles.player} />
+        </span>
+      </h1>
       <p>
         <label>
           <input
@@ -31,8 +39,27 @@ export default function App() {
             checked={withRobot}
             onChange={({ target: { checked } }) => setWithRobot(checked)}
           />
-          &nbsp;Next move with robot
+          &nbsp;Next move by robot
         </label>
+      </p>
+      <p className={[styles.gameState, getGSClassName(gs)].join(' ')}>
+        {GameState.Draw === gs && <span>It's a draw!</span>}
+        {GameState.X === gs && (
+          <span>
+            Player <Box className={styles.player} state={TttPlayer.X} /> wins!
+          </span>
+        )}
+        {GameState.O === gs && (
+          <span>
+            Player <Box className={styles.player} state={TttPlayer.O} /> wins!
+          </span>
+        )}
+
+        {GameState.Playing === gs ? (
+          <span>Playing...</span>
+        ) : (
+          <button onClick={restart}>Restart</button>
+        )}
       </p>
 
       <Board
@@ -62,17 +89,18 @@ export default function App() {
           }
         }}
       />
-      {GameState.Draw === gs && <p style={{ color: 'yellow' }}>It's a draw!</p>}
-      {GameState.X === gs && <p style={{ color: 'green' }}>Player X wins!</p>}
-      {GameState.O === gs && <p style={{ color: 'red' }}>Player O wins!</p>}
-      {GameState.Playing === gs && (
-        <p style={{ color: 'lightblue' }}>Playing...</p>
-      )}
-      {GameState.Playing !== gs && (
-        <p>
-          <button onClick={restart}>Restart</button>
-        </p>
-      )}
     </div>
   );
 }
+
+const getGSClassName = (gs: GameState) => {
+  switch (gs) {
+    case GameState.Draw:
+      return styles.draw;
+    case GameState.X:
+      return styles.winX;
+    case GameState.O:
+      return styles.winO;
+  }
+  return styles.playing;
+};
