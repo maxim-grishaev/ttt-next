@@ -20,7 +20,7 @@ export const Box = ({
 };
 
 const PLAYER_TO_CSS_MAP: Record<TttPlayer, string> = {
-  [TttPlayer.X]: styles.x,
-  [TttPlayer.O]: styles.o,
+  [TttPlayer.PX]: styles.x,
+  [TttPlayer.PO]: styles.o,
   [TttPlayer.Nobody]: styles.nobody,
 };

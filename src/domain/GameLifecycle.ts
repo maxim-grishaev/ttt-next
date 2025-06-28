@@ -3,8 +3,8 @@ import { TttPlayer } from './TttPlayer';
 
 export enum GameLifecycle {
   Playing = '...',
-  X = 'X',
-  O = 'O',
+  WinX = 'X',
+  WinO = 'O',
   Draw = '=',
 }
 
@@ -33,11 +33,11 @@ const hasPalyerWon = (board: TttBoard, player: TttPlayer) =>
   );
 
 export const getGameLifecycle = (board: TttBoard): GameLifecycle => {
-  if (hasPalyerWon(board, TttPlayer.X)) {
-    return GameLifecycle.X;
+  if (hasPalyerWon(board, TttPlayer.PX)) {
+    return GameLifecycle.WinX;
   }
-  if (hasPalyerWon(board, TttPlayer.O)) {
-    return GameLifecycle.O;
+  if (hasPalyerWon(board, TttPlayer.PO)) {
+    return GameLifecycle.WinO;
   }
   return board.some((it) => it === TttPlayer.Nobody)
     ? GameLifecycle.Playing
@@ -45,8 +45,8 @@ export const getGameLifecycle = (board: TttBoard): GameLifecycle => {
 };
 
 export const getWinnerByGameLifecycle = (boardState: GameLifecycle) =>
-  boardState === GameLifecycle.X
-    ? TttPlayer.X
-    : boardState === GameLifecycle.O
-      ? TttPlayer.O
+  boardState === GameLifecycle.WinX
+    ? TttPlayer.PX
+    : boardState === GameLifecycle.WinO
+      ? TttPlayer.PO
       : TttPlayer.Nobody;

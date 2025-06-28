@@ -19,8 +19,8 @@ export default function App() {
       <h1>
         TicTacToe
         <span className={styles.title}>
-          <Box player={TttPlayer.X} className={styles.player} />
-          <Box player={TttPlayer.O} className={styles.player} />
+          <Box player={TttPlayer.PX} className={styles.player} />
+          <Box player={TttPlayer.PO} className={styles.player} />
         </span>
       </h1>
 
@@ -34,7 +34,7 @@ export default function App() {
               ({ target: { checked } }) => ({ shouldUseRobot: checked }),
             )}
           />
-          &nbsp;Next move by robot
+          &nbsp;Play against robot
         </label>
       </p>
 
@@ -65,15 +65,15 @@ export default function App() {
           >
             <p>
               {GameLifecycle.Draw === glc && <span>It's a draw!</span>}
-              {GameLifecycle.X === glc && (
+              {GameLifecycle.WinX === glc && (
                 <span>
-                  Player <Box className={styles.player} player={TttPlayer.X} />{' '}
+                  Player <Box className={styles.player} player={TttPlayer.PX} />{' '}
                   wins!
                 </span>
               )}
-              {GameLifecycle.O === glc && (
+              {GameLifecycle.WinO === glc && (
                 <span>
-                  Player <Box className={styles.player} player={TttPlayer.O} />{' '}
+                  Player <Box className={styles.player} player={TttPlayer.PO} />{' '}
                   wins!
                 </span>
               )}
@@ -88,7 +88,7 @@ export default function App() {
 
 const GAME_LIFECYCLE_TO_CSS_MAP: Record<GameLifecycle, string> = {
   [GameLifecycle.Draw]: styles.draw,
-  [GameLifecycle.X]: styles.winX,
-  [GameLifecycle.O]: styles.winO,
+  [GameLifecycle.WinX]: styles.winX,
+  [GameLifecycle.WinO]: styles.winO,
   [GameLifecycle.Playing]: styles.playing,
 };

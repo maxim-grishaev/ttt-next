@@ -9,10 +9,10 @@ import { getOpponent, TttPlayer } from './TttPlayer';
 
 type Opts = {
   board: TttBoard;
-  player?: TttPlayer;
+  player: TttPlayer;
 };
 
-export const getBotMove = ({ board, player = TttPlayer.O }: Opts) =>
+export const getBotMove = ({ board, player }: Opts) =>
   minimax({ board, player }).index;
 
 type TheMove = {

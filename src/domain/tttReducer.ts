@@ -9,7 +9,7 @@ export type TttState = typeof TTT_DEFAULT_STATE;
 export const TTT_DEFAULT_STATE = {
   board: EMPTY_BOARD,
   withRobot: true,
-  currentPlayer: TttPlayer.X,
+  currentPlayer: TttPlayer.PX,
 };
 
 export const tttReducer = (state: TttState, action: TttAction): TttState => {
