@@ -1,12 +1,11 @@
 import { getIndicesByValue } from '@/lib/getIndicesByValue';
-import { TttBoard, TttPlayer } from './board';
 import {
-  GameState,
-  getGameState,
-  getWinnerByGameState,
-  opponent,
-  updateBoard,
-} from './getGameState';
+  GameLifecycle,
+  getGameLifecycle,
+  getWinnerByGameLifecycle,
+} from './GameLifecycle';
+import { TttBoard, updateBoard } from './TttBoard';
+import { getOpponent, TttPlayer } from './TttPlayer';
 
 type Opts = {
   board: TttBoard;
@@ -29,31 +28,32 @@ const createMove = (score: number, index: number | null = null): TheMove => ({
  * https://www.neverstopbuilding.com/blog/2013/12/13/tic-tac-toe-understanding-the-minimax-algorithm13];
  */
 const minimax = ({ player, board }: Required<Opts>): TheMove => {
-  const gs = getGameState(board);
-  if (gs === GameState.Draw) {
+  const glc = getGameLifecycle(board);
+  if (glc === GameLifecycle.Draw) {
     return createMove(0);
   }
-  if (gs !== GameState.Playing) {
-    return player === getWinnerByGameState(gs)
-      ? createMove(10)
-      : createMove(-10);
+  if (glc !== GameLifecycle.Playing) {
+    return player === getWinnerByGameLifecycle(glc)
+      ? createMove(1)
+      : createMove(-1);
   }
 
-  const freeCells = getIndicesByValue(TttPlayer.Nobody, board);
-  const opPlayer = opponent(player);
-  const bestMove = freeCells.reduce((bestMoveSoFar, cellIndex) => {
-    const opMove = minimax({
-      board: updateBoard(board, player, cellIndex),
-      player: opPlayer,
-    });
-    const bestOpMove = createMove(-opMove.score, cellIndex);
+  const opPlayer = getOpponent(player);
+  const freeMoves = getIndicesByValue(TttPlayer.Nobody, board).map(
+    (cellIndex) => {
+      const { score } = minimax({
+        board: updateBoard(board, player, cellIndex),
+        player: opPlayer,
+      });
+      return createMove(-score, cellIndex);
+    },
+  );
 
-    if (bestOpMove.score === bestMoveSoFar.score) {
-      return Math.random() < 0.5 ? bestOpMove : bestMoveSoFar;
-    }
+  const bestScore = freeMoves.reduce(
+    (score, move) => Math.max(score, move.score),
+    -Infinity,
+  );
 
-    return bestOpMove.score > bestMoveSoFar.score ? bestOpMove : bestMoveSoFar;
-  }, createMove(-Infinity));
-
-  return bestMove;
+  const bestMoves = freeMoves.filter((move) => move.score === bestScore);
+  return bestMoves[Math.floor(Math.random() * bestMoves.length)];
 };

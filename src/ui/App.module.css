@@ -1,3 +1,8 @@
+.player {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .title {
   display: inline-flex;
   vertical-align: middle;
@@ -12,27 +17,39 @@
   font-size: 1.5em;
   font-weight: 200;
 
-  .player {
-    width: 20px;
-    height: 20px;
-  }
   &.playing {
     opacity: 0.3;
   }
-  &.winX {
-    font-weight: 500;
-  }
-  &.winO {
-    font-weight: 500;
-  }
-  &.draw::before {
-    content: '🤝';
-    display: inline-block;
-    margin-right: 0.5em;
-  }
+}
+
+.board {
+  position: relative;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay);
+  backdrop-filter: blur(10px);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 150%;
+  font-weight: 500;
 
   button {
-    margin-left: 1em;
-    vertical-align: middle;
+    font-size: 90%;
+    font-weight: 200;
   }
+}
+
+.draw span::before {
+  content: '🤝';
+  display: inline-block;
+  margin-right: 0.5em;
 }

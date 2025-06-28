@@ -1,30 +1,26 @@
-import { TttPlayer } from '@/domain/board';
+import { TttPlayer } from '@/domain/TttPlayer';
 import styles from './Box.module.css';
 
 export const Box = ({
-  state,
-  onClick,
+  player,
+  onClick = () => {},
   className,
 }: {
-  state: TttPlayer;
+  player: TttPlayer;
   onClick?: () => void;
   className?: string;
 }) => {
-  const isEmpty = state === ' ';
+  const isEmpty = player === ' ';
+  const classes = [styles.box, className || '', PLAYER_TO_CSS_MAP[player]];
   return (
-    <div
-      className={[
-        styles.box,
-        className || '',
-        state === TttPlayer.X
-          ? styles.x
-          : state === TttPlayer.O
-            ? styles.o
-            : '',
-      ].join(' ')}
-      onClick={isEmpty ? onClick : undefined}
-    >
-      {isEmpty ? <>&nbsp;</> : state === 'x' ? '❌' : '〇'}
-    </div>
+    <span className={classes.join(' ')} onClick={isEmpty ? onClick : undefined}>
+      {isEmpty ? <>&nbsp;</> : player === 'x' ? '❌' : '〇'}
+    </span>
   );
+};
+
+const PLAYER_TO_CSS_MAP: Record<TttPlayer, string> = {
+  [TttPlayer.X]: styles.x,
+  [TttPlayer.O]: styles.o,
+  [TttPlayer.Nobody]: styles.nobody,
 };

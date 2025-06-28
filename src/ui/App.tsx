@@ -1,106 +1,94 @@
 'use client';
-import { useState } from 'react';
-import { EMPTY_FIELD, TttPlayer, hasStarted } from '@/domain/board';
+import { TttPlayer } from '@/domain/TttPlayer';
+import { GameLifecycle, getGameLifecycle } from '@/domain/GameLifecycle';
 import { Board } from './Board';
-import {
-  GameState,
-  getGameState,
-  opponent,
-  updateBoard,
-} from '@/domain/getGameState';
-import { getBotMove } from '@/domain/getBotMove';
 import { Box } from './Box';
+import { useTttState } from './hooks/useTttState';
 import styles from './App.module.css';
 
 export default function App() {
-  const [withRobot, setWithRobot] = useState(false);
-  const [currentPlayer, setPlayer] = useState(TttPlayer.X);
-  const [currentBoard, setBoard] = useState(EMPTY_FIELD);
+  const {
+    state: { board: currentBoard, currentPlayer, withRobot },
+    sendEvent,
+    createCallback,
+  } = useTttState();
 
-  const restart = () => {
-    setPlayer(TttPlayer.X);
-    setBoard(EMPTY_FIELD);
-  };
-
-  const gs = getGameState(currentBoard);
+  const glc = getGameLifecycle(currentBoard);
   return (
     <div className='App'>
       <h1>
         TicTacToe
         <span className={styles.title}>
-          <Box state={TttPlayer.X} className={styles.player} />
-          <Box state={TttPlayer.O} className={styles.player} />
+          <Box player={TttPlayer.X} className={styles.player} />
+          <Box player={TttPlayer.O} className={styles.player} />
         </span>
       </h1>
+
       <p>
         <label>
           <input
             type='checkbox'
             checked={withRobot}
-            onChange={({ target: { checked } }) => setWithRobot(checked)}
+            onChange={createCallback(
+              'WITH_ROBOT_CHANGED',
+              ({ target: { checked } }) => ({ shouldUseRobot: checked }),
+            )}
           />
           &nbsp;Next move by robot
         </label>
       </p>
-      <p className={[styles.gameState, getGSClassName(gs)].join(' ')}>
-        {GameState.Draw === gs && <span>It's a draw!</span>}
-        {GameState.X === gs && (
-          <span>
-            Player <Box className={styles.player} state={TttPlayer.X} /> wins!
-          </span>
-        )}
-        {GameState.O === gs && (
-          <span>
-            Player <Box className={styles.player} state={TttPlayer.O} /> wins!
-          </span>
-        )}
 
-        {GameState.Playing === gs ? (
-          <span>Playing...</span>
+      <p className={styles.gameState}>
+        {GameLifecycle.Playing === glc ? (
+          <span>
+            Next move by{' '}
+            <Box player={currentPlayer} className={styles.player} />
+            ...
+          </span>
         ) : (
-          <button onClick={restart}>Restart</button>
+          <span>Game over!</span>
         )}
       </p>
 
-      <Board
-        board={currentBoard}
-        onBoxClick={(playerIdx) => {
-          if (gs !== GameState.Playing) {
-            return;
+      <div className={styles.board}>
+        <Board
+          board={currentBoard}
+          onBoxClick={(playerIdx) =>
+            sendEvent('PLAYER_MOVE', { index: playerIdx })
           }
-          const board = updateBoard(currentBoard, currentPlayer, playerIdx);
-          setBoard(board);
-          if (!withRobot) {
-            setPlayer(opponent(currentPlayer));
-            return;
-          }
-
-          if (getGameState(board) !== GameState.Playing) {
-            return;
-          }
-
-          const botIdx = getBotMove({
-            board,
-            player: opponent(currentPlayer),
-          });
-          if (botIdx !== null) {
-            board[botIdx] = opponent(currentPlayer);
-            setBoard(board);
-          }
-        }}
-      />
+        />
+        {GameLifecycle.Playing !== glc && (
+          <div
+            className={[styles.overlay, GAME_LIFECYCLE_TO_CSS_MAP[glc]].join(
+              ' ',
+            )}
+          >
+            <p>
+              {GameLifecycle.Draw === glc && <span>It's a draw!</span>}
+              {GameLifecycle.X === glc && (
+                <span>
+                  Player <Box className={styles.player} player={TttPlayer.X} />{' '}
+                  wins!
+                </span>
+              )}
+              {GameLifecycle.O === glc && (
+                <span>
+                  Player <Box className={styles.player} player={TttPlayer.O} />{' '}
+                  wins!
+                </span>
+              )}
+            </p>
+            <button onClick={() => sendEvent('RESTART')}>Restart</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-const getGSClassName = (gs: GameState) => {
-  switch (gs) {
-    case GameState.Draw:
-      return styles.draw;
-    case GameState.X:
-      return styles.winX;
-    case GameState.O:
-      return styles.winO;
-  }
-  return styles.playing;
+const GAME_LIFECYCLE_TO_CSS_MAP: Record<GameLifecycle, string> = {
+  [GameLifecycle.Draw]: styles.draw,
+  [GameLifecycle.X]: styles.winX,
+  [GameLifecycle.O]: styles.winO,
+  [GameLifecycle.Playing]: styles.playing,
 };

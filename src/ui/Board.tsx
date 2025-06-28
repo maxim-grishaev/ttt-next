@@ -1,5 +1,6 @@
-import { isNobody, TttBoard } from '@/domain/board';
-import { getFieldIndexByCoords } from '@/domain/board';
+import { getFieldIndexByCoords } from '@/domain/coords';
+import { TttBoard } from '@/domain/TttBoard';
+import { isNobody } from '@/domain/TttPlayer';
 import { range } from '@/lib/range';
 import { Box } from './Box';
 import styles from './Board.module.css';
@@ -24,7 +25,7 @@ export const Board = ({
             ].join(' ');
             return (
               <div key={ci} className={classes}>
-                <Box key={ci} state={state} onClick={() => onBoxClick(idx)} />
+                <Box key={ci} player={state} onClick={() => onBoxClick(idx)} />
               </div>
             );
           })}
